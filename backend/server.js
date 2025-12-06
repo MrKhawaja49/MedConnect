@@ -1,0 +1,24 @@
+import express from 'express'
+import cors from 'cors'
+import 'dotenv/config'
+import connectDB from './config/mongodb.js'
+import connectCloudinary from './config/cloudinary.js'
+
+
+// app cpnfig
+const app = express()
+const port = process.env.PORT || 4000
+connectDB()
+connectCloudinary()
+
+// middlewares
+app.use(express.json()) //any req we made will get passed using this method
+app.use(cors()) //it will  allow frontend connect to backend
+
+//api endpoint
+
+app.get('/', (req,res)=>{
+    res.send("API IS WORKING JUST !")
+})
+
+app.listen(port, ()=> console.log("Server Started", port))
