@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 export const doctorContext = createContext()
 
-const doctorContextProvider = () => {
+const doctorContextProvider = (props) => {
 
     const value = {
         
