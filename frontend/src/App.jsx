@@ -8,11 +8,15 @@ import About from './Pages/About'
 import Login from './Pages/Login'
 import MyAppointments from './Pages/MyAppointments'
 import Appointment from './Pages/Appointment'
-import Contact from './Pages/Contact'
+import Contact from './Pages/Contact';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const App = () => {
   return (
     <div className='mx-4 sm:mx-[10%]'>
+      <ToastContainer/>
       <Navbar />
       <Routes>
         <Route path='/' element={<Home />} /> {/* Define your routes here */}
