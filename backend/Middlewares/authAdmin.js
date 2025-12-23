@@ -19,7 +19,8 @@ const authAdmin = async (req, res, next) => {
     const decoded = jwt.verify(atoken, process.env.JWT_SECRET);
     console.log(decoded);
 
-    // ✅ CHECK ROLE, NOT EMAIL+PASSWORD STRING
+    // CHECK ROLE, NOT EMAIL+PASSWORD STRING
+    
     if (decoded.role !== "admin") {
       return res.json({
         success: false,

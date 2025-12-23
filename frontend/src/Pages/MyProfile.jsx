@@ -1,33 +1,44 @@
 import React, { useContext, useState } from "react";
 import Footer from "../Components/Footer";
 import { AppContext } from "../Context/AppContext";
-import {assets} from '../assets/assets'
+import { assets } from "../assets/assets";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const MyProfile = () => {
   const { userData, setUserData, token, backendUrl, loadUserProfileData } =
     useContext(AppContext);
+    
+
+    console.log(userData,"userData")
 
   const [isEdit, setIsEdit] = useState(false);
   const [image, setImage] = useState(false);
 
   const updateUserProfileData = async () => {
     try {
-      
       const formData = new FormData();
 
-      formData.append('name', userData.name)
-      formData.append('phone', userData.phone)
-      formData.append('address', JSON.stringify(userData.address))
-      formData.append('gender', userData.gender)
-      formData.append('dob', userData.dob)
+      formData.append("name", userData.name);
+      formData.append("phone", userData.phone);
+      formData.append(
+        "address",
+        typeof userData.address === "string"
+          ? userData.address
+          : JSON.stringify(userData.address)
+      );
+      formData.append("gender", userData.gender);
+      formData.append("dob", userData.dob);
 
-      image && formData.append('image', image)
+      image && formData.append("image", image);
 
-      const {data} =await axios.post(backendUrl + '/api/user/update-profile', formData, {headers: {token}})
-      
-      if(data.success) {
+      const { data } = await axios.post(
+        backendUrl + "/api/user/update-profile",
+        formData,
+        { headers: { token } }
+      );
+
+      if (data.success) {
         toast.success(data.message);
         await loadUserProfileData();
         setIsEdit(false);
@@ -35,7 +46,6 @@ const MyProfile = () => {
       } else {
         toast.error(data.message);
       }
-
     } catch (error) {
       console.log(error);
       toast.error(error.message);
@@ -48,10 +58,24 @@ const MyProfile = () => {
         {isEdit ? (
           <label htmlFor="image">
             <div className="inline-block relative cursor-pointer">
-              <img className="w-36 rounded opacity-75" src={image ? URL.createObjectURL(image) : userData.image} alt="" />
-              <img className="w-10 absolute bottom-12 right-12" src={image ? '' : assets.upload_icon} alt="" />
+              <img
+                className="w-36 rounded opacity-75"
+                // src={image ? URL.createObjectURL(image) : userData.image}
+                src={image ? URL.createObjectURL(image) : userData.image || ""}
+                alt=""
+              />
+              <img
+                className="w-10 absolute bottom-12 right-12"
+                src={image ? "" : assets.upload_icon}
+                alt=""
+              />
             </div>
-            <input onChange={(e)=>setImage(e.target.files[0])} type="file" id="image" hidden />
+            <input
+              onChange={(e) => setImage(e.target.files[0])}
+              type="file"
+              id="image"
+              hidden
+            />
           </label>
         ) : (
           <img className="w-60 rounded" src={userData.image} alt="" />
@@ -101,10 +125,11 @@ const MyProfile = () => {
                   onChange={(e) =>
                     setUserData((prev) => ({
                       ...prev,
-                      address: { ...prev.address, line1: e.target.value },
+                      address: {line2 : userData.address.line2 ,line1: e.target.value },
                     }))
                   }
-                  value={userData.address.line1}
+                  // value={userData.address.line1}
+                  value={userData.address?.line1 || ""}
                   type="text"
                 />
                 <br />
@@ -113,10 +138,11 @@ const MyProfile = () => {
                   onChange={(e) =>
                     setUserData((prev) => ({
                       ...prev,
-                      address: { ...prev.address, line2: e.target.value },
+                      address: {line1 : userData.address.line1 , line2: e.target.value },
                     }))
                   }
-                  value={userData.address.line2}
+                  // value={userData.address.line2}
+                  value={userData.address?.line2 || ""}
                   type="text"
                 />
               </p>
