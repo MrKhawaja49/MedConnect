@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
 import doctorModel from "../Models/doctorModel.js";
 import appointmentModel from "../Models/appointmentModel.js";
+import Stripe from 'stripe'
 //API TO REGISTER USER
 
 const registerUser = async (req, res) => {
@@ -250,6 +251,71 @@ const cancelAppointment = async (req, res) => {
   }
 };
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+//  API TO MAKE PAYMENT OF APPOINTMENT USING STRIPE
+const createPaymentIntent = async (req, res) => {
+  try {
+    const { amount, appointmentId } = req.body;
+
+    if (!amount || !appointmentId) {
+      return res.status(400).json({
+        success: false,
+        message: "Amount and appointment ID are required",
+      });
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // Stripe works in smallest currency unit
+      currency: "usd",
+      metadata: {
+        appointmentId: appointmentId,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const markAppointmentPaid = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const userId = req.userId;
+
+    const appointment = await appointmentModel.findById(appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+
+    // Verify appointment belongs to logged-in user
+    if (appointment.userId.toString() !== userId) {
+      return res.status(403).json({ success: false, message: "Unauthorized action" });
+    }
+
+    appointment.payment = true;
+    appointment.status = "paid";
+
+    await appointment.save();
+
+    res.json({ success: true, message: "Payment completed and appointment updated" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+
 export {
   registerUser,
   loginUser,
@@ -257,5 +323,7 @@ export {
   updateProfile,
   bookAppointment,
   listAppointment,
-  cancelAppointment
+  cancelAppointment,
+  createPaymentIntent,
+  markAppointmentPaid
 };

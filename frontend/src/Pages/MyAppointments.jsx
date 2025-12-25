@@ -5,17 +5,45 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import PaymentForm from "./PaymentForm";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const MyAppointments = () => {
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+
   const { backendUrl, token, getDoctorsData } = useContext(AppContext);
 
   const [appointments, setAppointments] = useState([]);
-  const months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const months = [
+    "",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const handlePayOnline = (appointment) => {
+    setSelectedAppointment(appointment);
+    setShowPaymentForm(true);
+  };
 
   const slotDateFormat = (slotDate) => {
-    const dateArray = slotDate.split('_')
-    return dateArray[0]+ " " + months[Number(dateArray[1])] + " " + dateArray[2]
-  }
+    const dateArray = slotDate.split("_");
+    return (
+      dateArray[0] + " " + months[Number(dateArray[1])] + " " + dateArray[2]
+    );
+  };
 
   const getUserAppointments = async () => {
     try {
@@ -37,21 +65,23 @@ const MyAppointments = () => {
 
   const cancelAppointment = async (appointmentId) => {
     try {
-      
-    const {data} = await axios.post(backendUrl + '/api/user/cancel-appointment', {appointmentId}, {headers:{token}}) 
-    if (data.success) {
-      toast.success(data.message)
-      getUserAppointments()
-      getDoctorsData()
-    } else {
-      toast.error(data.message)
-    }
-
+      const { data } = await axios.post(
+        backendUrl + "/api/user/cancel-appointment",
+        { appointmentId },
+        { headers: { token } }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        getUserAppointments();
+        getDoctorsData();
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
       console.log(error);
       toast.error(error.message);
     }
-  }
+  };
 
   useEffect(() => {
     if (token) {
@@ -92,16 +122,57 @@ const MyAppointments = () => {
             </div>
             <div></div>
             <div className="flex flex-col gap-2 justify-end">
-              {!item.cancelled && <button className="text-sm text-cyan-600 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300">
-                Pay Online
-              </button>}
-              {!item.cancelled && <button onClick={()=>cancelAppointment(item._id)} className="text-sm text-cyan-600 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300">
-                Cancel Appointment
-              </button>}
-              {item.cancelled && <button className="sm:min-w-48 py-2 border border-red-500 rounded text-red-500">Appointment Cancelled</button>}
+              {/* If cancelled → show only this */}
+              {item.cancelled ? (
+                <button className="sm:min-w-48 py-2 border border-red-500 rounded text-red-500 font-medium">
+                  Appointment Cancelled
+                </button>
+              ) : (
+                <>
+                  {/* If not paid → show Pay Online */}
+                  {!item.payment && (
+                    <button
+                      onClick={() => handlePayOnline(item)}
+                      className="text-sm text-cyan-600 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300"
+                    >
+                      Pay Online
+                    </button>
+                  )}
+
+                  {/* If paid → show Paid */}
+                  {item.payment && (
+                    <button className="sm:min-w-48 py-2 border bg-green-500 border-green-500 rounded text-white font-medium">
+                      Paid
+                    </button>
+                  )}
+
+                  {/* Cancel button only if not cancelled */}
+                  <button
+                    onClick={() => cancelAppointment(item._id)}
+                    className="text-sm text-cyan-600 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
+                  >
+                    Cancel Appointment
+                  </button>
+                </>
+              )}
             </div>
           </div>
         ))}
+        {showPaymentForm && selectedAppointment && (
+          <Elements stripe={stripePromise}>
+            <PaymentForm
+              appointmentId={selectedAppointment._id}
+              amount={selectedAppointment.amount}
+              backendUrl={backendUrl}
+              token={token}
+              onPaymentSuccess={() => {
+                getUserAppointments(); // Refresh list
+                setShowPaymentForm(false); // Close modal
+              }}
+              onClose={() => setShowPaymentForm(false)} // ← THIS IS THE KEY!
+            />
+          </Elements>
+        )}
       </div>
 
       <Footer />
