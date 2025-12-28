@@ -24,12 +24,12 @@ const Footer = () => {
         {/*-----------------CENTER SECTION FOOTER ----------------*/}
 
         <div>
-            <p className="text-xl font-bold mb-5 text-cyan-900">COMPANY</p>
-            <ul className="flex flex-col gap-2 text-cyan-900">
+            <p className="text-xl font-bold mb-5 text-cyan-900 ">COMPANY</p>
+            <ul className="flex flex-col gap-2 text-cyan-900 cursor-pointer">
                 <li>HOME</li>
                 <li>ABOUT US</li>
                 <li>CONTACT US</li>
-                <li>PROVACY POLICY</li>
+                <li>PRIVACY POLICY</li>
             </ul>
         </div>
 

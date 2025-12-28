@@ -122,40 +122,45 @@ const MyAppointments = () => {
             </div>
             <div></div>
             <div className="flex flex-col gap-2 justify-end">
-              {/* If cancelled → show only this */}
-              {item.cancelled ? (
-                <button className="sm:min-w-48 py-2 border border-red-500 rounded text-red-500 font-medium">
-                  Appointment Cancelled
-                </button>
-              ) : (
-                <>
-                  {/* If not paid → show Pay Online */}
-                  {!item.payment && (
-                    <button
-                      onClick={() => handlePayOnline(item)}
-                      className="text-sm text-cyan-600 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300"
-                    >
-                      Pay Online
-                    </button>
-                  )}
 
-                  {/* If paid → show Paid */}
-                  {item.payment && (
-                    <button className="sm:min-w-48 py-2 border bg-green-500 border-green-500 rounded text-white font-medium">
-                      Paid
-                    </button>
-                  )}
+  {/* 1️⃣ Cancelled → ONLY show this */}
+  {item.cancelled ? (
+    <button className="sm:min-w-48 py-2 border border-red-500 rounded text-red-500 font-medium">
+      Appointment Cancelled
+    </button>
+  ) : item.doisCompletecId ? (
+    // 2️⃣ Completed → show Completed button ONLY if not cancelled
+    <button className="sm:min-w-48 py-2 border border-green-500 rounded text-green-400">
+      Completed
+    </button>
+  ) : (
+    // 3️⃣ Active appointments
+    <>
+      {!item.payment && (
+        <button
+          onClick={() => handlePayOnline(item)}
+          className="text-sm text-cyan-600 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300"
+        >
+          Pay Online
+        </button>
+      )}
 
-                  {/* Cancel button only if not cancelled */}
-                  <button
-                    onClick={() => cancelAppointment(item._id)}
-                    className="text-sm text-cyan-600 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
-                  >
-                    Cancel Appointment
-                  </button>
-                </>
-              )}
-            </div>
+      {item.payment && (
+        <button className="sm:min-w-48 py-2 border bg-green-500 border-green-500 rounded text-white font-medium">
+          Paid
+        </button>
+      )}
+
+      <button
+        onClick={() => cancelAppointment(item._id)}
+        className="text-sm text-cyan-600 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
+      >
+        Cancel Appointment
+      </button>
+    </>
+  )}
+</div>
+
           </div>
         ))}
         {showPaymentForm && selectedAppointment && (

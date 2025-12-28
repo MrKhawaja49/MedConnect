@@ -201,17 +201,20 @@ const MyProfile = () => {
             </button>
           ) : (
             <button
-              className="border border-primary text-cyan-900 px-8 py-2 rounded-full hover:bg-primary hover:text-white transition-all"
+              className="border border-primary text-cyan-900 px-8 py-2 mb-11 rounded-full hover:bg-primary hover:text-white transition-all"
               onClick={() => setIsEdit(true)}
             >
               Edit
             </button>
+            
           )}
         </div>
 
-        <Footer />
+       
       </div>
+      
     )
+    
   );
 };
 

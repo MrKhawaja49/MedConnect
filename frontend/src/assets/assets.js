@@ -61,7 +61,7 @@ export const assets = {
 
 export const specialityData = [
   {
-    speciality: "General physician",
+    speciality: "General Physician",
     image: General_physician,
   },
   {
@@ -91,7 +91,7 @@ export const doctors = [
     _id: "doc1",
     name: "Dr. Richard James",
     image: doc1,
-    speciality: "General physician",
+    speciality: "General Physician",
     degree: "MBBS",
     experience: "4 Years",
     about:
@@ -181,7 +181,7 @@ export const doctors = [
     _id: "doc7",
     name: "Dr. Christopher Davis",
     image: doc7,
-    speciality: "General physician",
+    speciality: "General Physician",
     degree: "MBBS",
     experience: "4 Years",
     about:

@@ -67,7 +67,7 @@ const appointmentsDoctor = async (req, res) => {
 };
 
 // API TO MARK APPOINTMENT IS COMPLETE
-const appointmentComplete = async (req,res) => {
+const appointmentComplete = async (req, res) => {
   try {
     const docId = req.docId;
     const { appointmentId } = req.body;
@@ -76,7 +76,7 @@ const appointmentComplete = async (req,res) => {
 
     if (appointmentData && appointmentData.docId.toString() === docId) {
       await appointmentModel.findByIdAndUpdate(appointmentId, {
-         doisCompletecId: true,
+        doisCompletecId: true,
       });
       return res.json({ success: true, message: "Appointment Completed!" });
     } else {
@@ -87,7 +87,6 @@ const appointmentComplete = async (req,res) => {
     res.json({ success: false, message: error.message });
   }
 };
-
 
 // API TO CANCEL APPOINTMENT FOR DOC PANEL
 const appointmentCancel = async (req, res) => {
@@ -112,37 +111,68 @@ const appointmentCancel = async (req, res) => {
 };
 
 //API TO GET DASHBOARD FOR DOC PANEL
-const doctorDashboard = async(req, res) => {
+const doctorDashboard = async (req, res) => {
   try {
-    
     const docId = req.docId;
-    const appointments = await appointmentModel.find({docId})
+    const appointments = await appointmentModel.find({ docId });
 
-    let earnings = 0
-    
-    appointments.map((item)=>{
+    let earnings = 0;
+
+    appointments.map((item) => {
       if (item.doisCompletecId || item.payment) {
-        earnings += item.amount
+        earnings += item.amount;
       }
-    })
+    });
 
-//we will check if in this userId if any data is available in this patients[] array then we will not add that appointment and if data is available then vice versa
-    let patients = []
+    //we will check if in this userId if any data is available in this patients[] array then we will not add that appointment and if data is available then vice versa
+    let patients = [];
 
-    appointments.map((item)=> {
+    appointments.map((item) => {
       if (!patients.includes(item.userId)) {
-          patients.push(item.userId)
+        patients.push(item.userId);
       }
-    })
+    });
 
     const dashData = {
       earnings,
       appointments: appointments.length,
       patients: patients.length,
-      latestAppointments: appointments.reverse().slice(0,5)
-    }
+      latestAppointments: appointments.reverse().slice(0, 5),
+    };
 
-    res.json({success:true, dashData})
+    res.json({ success: true, dashData });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+//API TO GET DOC PROFILE FOR DOC PANEL
+const doctorProfile = async (req, res) => {
+  try {
+
+    const docId = req.docId;
+    const profileData = await doctorModel.findById(docId).select('-password')
+
+    res.json({success:true, profileData})
+
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
+//API TO UPDATE DOC PROFILE DATA FROM DOC PANEL
+const updateDoctorProfile = async (req, res) => {
+  try {
+    
+    const  docId = req.docId;
+    const { fees, address, available} = req.body;
+
+    await doctorModel.findByIdAndUpdate(docId, {fees, address, available})
+
+    res.json({success:true, message: 'Profile Updated!'})
 
   } catch (error) {
     console.log(error);
@@ -150,4 +180,14 @@ const doctorDashboard = async(req, res) => {
   }
 }
 
-export { changeAvailability, doctorList, loginDoctor, appointmentsDoctor, appointmentComplete, appointmentCancel, doctorDashboard };
+export {
+  changeAvailability,
+  doctorList,
+  loginDoctor,
+  appointmentsDoctor,
+  appointmentComplete,
+  appointmentCancel,
+  doctorDashboard,
+  doctorProfile, 
+  updateDoctorProfile
+};
