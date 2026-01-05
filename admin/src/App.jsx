@@ -11,9 +11,9 @@ import AllAppointments from "./Pages/Admin/AllAppointments";
 import AddDoctor from "./Pages/Admin/AddDoctor";
 import DoctorsList from "./Pages/Admin/DoctorsList";
 import { doctorContext } from "./Context/doctorContext";
-import DoctorDashboard from "./Pages/Doctor/doctorDashboard";
-import DoctorAppointment from "./Pages/Doctor/doctorAppointment";
-import DoctorProfile from "./Pages/Doctor/doctorProfile";
+import DoctorDashboard from "./Pages/Doctor/DoctorDashboard";
+import DoctorAppointment from "./Pages/Doctor/DoctorAppointment";
+import DoctorProfile from "./Pages/Doctor/DoctorProfile";
 
 const App = () => {
 
