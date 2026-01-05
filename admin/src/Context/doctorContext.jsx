@@ -7,7 +7,12 @@ export const doctorContext = createContext()
 
 const doctorContextProvider = (props) => {
 
-    const backendUrl = "https://medconnect-backend-iih0.onrender.com";
+   // CRA
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+// Vite
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
     const [dToken, setDToken] = useState (localStorage.getItem("dToken") ? localStorage.getItem("dToken") : "")
     const [appointments, setAppointments] = useState([])
