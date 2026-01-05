@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = "https://medconnect-backend-iih0.onrender.com";
 
   const [doctors, setDoctors] = useState([]);
   const [token, setToken] = useState(
