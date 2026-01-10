@@ -7,7 +7,13 @@ export const doctorContext = createContext()
 
 const doctorContextProvider = (props) => {
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL
+// Remove the CRA line
+// const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+// Keep only Vite line
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+
 
     const [dToken, setDToken] = useState (localStorage.getItem("dToken") ? localStorage.getItem("dToken") : "")
     const [appointments, setAppointments] = useState([])

@@ -12,7 +12,12 @@ const AdminContextProvider = (props) => {
   const [appointments, setAppointments] = useState([]);
   const [dashData, setDashData] = useState(false)
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+// Remove the CRA line
+// const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
+// Keep only Vite line
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
   const getAllDoctors = async () => {
     try {

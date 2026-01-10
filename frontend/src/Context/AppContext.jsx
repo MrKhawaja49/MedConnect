@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
+  // Vite backend URL from environment variable
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [doctors, setDoctors] = useState([]);
@@ -47,14 +48,14 @@ const AppContextProvider = (props) => {
   };
 
   const value = {
-    doctors, getDoctorsData,
+    doctors,
+    getDoctorsData,
     token,
     setToken,
     backendUrl,
     userData,
     setUserData,
     loadUserProfileData,
-
   };
 
   useEffect(() => {
